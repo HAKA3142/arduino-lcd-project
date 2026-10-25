@@ -102,15 +102,23 @@
     <section>
       <h2>03. 아두이노 코드</h2>
       <p>작성한 코드를 캡처한 이미지다. 코드에서는 8개의 문자 패턴을 저장하고, 정해진 순서와 시간에 따라 LCD에 출력하도록 작성했다.</p>
-      <div class="photo">
-        <img src="code1.jpg" alt="아두이노 코드 사진 첫 번째" hidden>
-        <div class="missing"><strong>코드 사진 1</strong><code>code1.jpg</code>를 업로드하면 이곳에 표시된다.</div>
+      <div id="code-gallery">
+        <div id="code-missing" class="missing">
+          <strong>아두이노 코드 사진</strong>
+          <code>code1.jpg</code>, <code>code2.jpg</code>, ... 와 같이 업로드하면 순서대로 표시된다.
+        </div>
+        <div class="photo" hidden><img src="code1.jpg" alt="아두이노 코드 사진 1"></div>
+        <div class="photo" hidden><img src="code2.jpg" alt="아두이노 코드 사진 2"></div>
+        <div class="photo" hidden><img src="code3.jpg" alt="아두이노 코드 사진 3"></div>
+        <div class="photo" hidden><img src="code4.jpg" alt="아두이노 코드 사진 4"></div>
+        <div class="photo" hidden><img src="code5.jpg" alt="아두이노 코드 사진 5"></div>
+        <div class="photo" hidden><img src="code6.jpg" alt="아두이노 코드 사진 6"></div>
+        <div class="photo" hidden><img src="code7.jpg" alt="아두이노 코드 사진 7"></div>
+        <div class="photo" hidden><img src="code8.jpg" alt="아두이노 코드 사진 8"></div>
+        <div class="photo" hidden><img src="code9.jpg" alt="아두이노 코드 사진 9"></div>
+        <div class="photo" hidden><img src="code10.jpg" alt="아두이노 코드 사진 10"></div>
       </div>
-      <div class="photo">
-        <img src="code2.jpg" alt="아두이노 코드 사진 두 번째" hidden>
-        <div class="missing"><strong>코드 사진 2</strong><code>code2.jpg</code>를 업로드하면 이곳에 표시된다.</div>
-      </div>
-      <p class="note">코드 사진이 한 장이면 두 번째 코드 사진 영역은 삭제해도 된다.</p>
+      <p class="note">코드 사진은 최대 10장까지 올릴 수 있으며, 업로드하지 않은 사진의 빈칸은 나타나지 않는다.</p>
     </section>
 
     <section>
@@ -142,12 +150,26 @@
   <script>
     // 이미지가 실제로 업로드된 경우에만 사진을 표시합니다.
     document.querySelectorAll('.photo').forEach(function (area) {
+      if (area.closest('#code-gallery')) return;
       var img = area.querySelector('img');
       var placeholder = area.querySelector('.missing');
       function showImage() { img.hidden = false; placeholder.hidden = true; }
       img.addEventListener('load', showImage);
       img.addEventListener('error', function () { img.hidden = true; placeholder.hidden = false; });
       if (img.complete && img.naturalWidth > 0) showImage();
+    });
+
+    // 실제 업로드된 코드 사진만 표시합니다 (code1.jpg ~ code10.jpg).
+    var gallery = document.getElementById('code-gallery');
+    var galleryMissing = document.getElementById('code-missing');
+    gallery.querySelectorAll('.photo').forEach(function (area) {
+      var img = area.querySelector('img');
+      function showCodePhoto() {
+        area.hidden = false;
+        galleryMissing.hidden = true;
+      }
+      img.addEventListener('load', showCodePhoto);
+      if (img.complete && img.naturalWidth > 0) showCodePhoto();
     });
 
     // 업로드한 MP4 파일이 읽히면 영상을 표시합니다.
