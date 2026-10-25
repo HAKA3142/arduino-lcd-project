@@ -33,6 +33,7 @@
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 15px; }
     th, td { border: 1px solid #ddd; padding: 9px 12px; text-align: left; }
     th { background: #f2f3f5; width: 32%; }
+    .wiring-table th { width: 50%; }
     ul, ol { padding-left: 24px; }
     li { margin: 5px 0; }
     code { padding: 2px 4px; background: #f1f1f1; font-family: Consolas, monospace; font-size: 14px; }
@@ -82,6 +83,20 @@
         <img src="sketch.jpg" alt="직접 그린 꽃 애니메이션 스케치 또는 연결도" hidden>
         <div class="missing"><strong>스케치 사진</strong><code>sketch.jpg</code>를 업로드하면 이곳에 표시된다.</div>
       </div>
+      <h3>LCD1602와 Arduino Uno 핀 연결</h3>
+      <p>LCD1602의 I²C 모듈을 Arduino Uno에 다음과 같이 연결했다.</p>
+      <table class="wiring-table">
+        <thead>
+          <tr><th scope="col">LCD 핀</th><th scope="col">Uno 연결</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GND</td><td>GND</td></tr>
+          <tr><td>VCC</td><td>5V</td></tr>
+          <tr><td>SDA</td><td>A4</td></tr>
+          <tr><td>SCL</td><td>A5</td></tr>
+        </tbody>
+      </table>
+      <p class="note">I²C 변환 모듈이 연결된 LCD1602와 Arduino Uno R3 기준이다.</p>
     </section>
 
     <section>
