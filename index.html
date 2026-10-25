@@ -2,65 +2,146 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arduino LCD Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LCD1602 꽃 애니메이션 제작 기록</title>
   <style>
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
+      margin: 0;
+      background: #f7f8fa;
       color: #222;
-      max-width: 850px;
-      margin: 40px auto;
-      padding: 20px;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+      font-size: 16px;
       line-height: 1.8;
     }
-    section {
-      background: white;
-      padding: 25px;
-      margin: 20px 0;
-      border-radius: 12px;
+    .container { max-width: 880px; margin: 0 auto; padding: 30px 20px 60px; }
+    header { padding: 20px 4px 26px; border-bottom: 2px solid #333; }
+    h1 { font-size: 30px; margin: 0 0 8px; line-height: 1.4; }
+    .subtitle { margin: 0; color: #555; }
+    .info { margin-top: 14px; color: #666; font-size: 14px; }
+    section { padding: 26px 28px; margin-top: 22px; background: white; border: 1px solid #ddd; border-radius: 5px; }
+    h2 { font-size: 21px; margin: 0 0 15px; padding-bottom: 9px; border-bottom: 1px solid #e1e1e1; }
+    h3 { font-size: 17px; margin: 17px 0 6px; }
+    p { margin: 9px 0; }
+    .note { color: #666; font-size: 14px; }
+    video { width: 100%; display: block; background: #222; border-radius: 3px; }
+    .photo img { display: block; max-width: 100%; height: auto; margin: 0 auto; border: 1px solid #ddd; }
+    .photo + .photo { margin-top: 16px; }
+    .missing { padding: 44px 16px; border: 1px dashed #bbb; background: #fafafa; color: #666; text-align: center; }
+    .missing strong { display: block; color: #444; }
+    [hidden] { display: none !important; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 15px; }
+    th, td { border: 1px solid #ddd; padding: 9px 12px; text-align: left; }
+    th { background: #f2f3f5; width: 32%; }
+    ul, ol { padding-left: 24px; }
+    li { margin: 5px 0; }
+    code { padding: 2px 4px; background: #f1f1f1; font-family: Consolas, monospace; font-size: 14px; }
+    footer { margin-top: 27px; text-align: center; color: #777; font-size: 13px; }
+    @media (max-width: 600px) {
+      .container { padding: 18px 12px 40px; }
+      h1 { font-size: 25px; }
+      section { padding: 18px 16px; }
+      h2 { font-size: 19px; }
+      th { width: 38%; }
     }
-    img { max-width: 100%; border-radius: 8px; }
-    h1 { color: #204c85; }
   </style>
 </head>
 <body>
-  <h1>Arduino LCD1602 Custom Character Project</h1>
-  <p>아두이노를 활용한 LCD 캐릭터 애니메이션</p>
+  <div class="container">
+    <header>
+      <h1>LCD1602 꽃 애니메이션</h1>
+      <p class="subtitle">씨앗이 자라 꽃이 피고 흔들리는 모습을 한 칸의 LCD 문자로 표현하기</p>
+      <p class="info">아두이노 LCD1602 · Custom Character 활용 과제</p>
+    </header>
 
-  <section>
-    <h2>1. 프로젝트 소개</h2>
-    <p>
-      LCD1602의 첫 번째 줄 첫 번째 칸에서
-      Custom Character를 활용하여
-      부드러운 캐릭터 애니메이션을 구현하였다.
-    </p>
-  </section>
+    <section>
+      <h2>프로젝트 소개</h2>
+      <p>이번 과제에서는 LCD1602의 첫 번째 줄 첫 번째 칸에 사용자 정의 문자를 표시해, 씨앗이 새싹과 꽃으로 자라는 과정을 애니메이션으로 구현했다. 꽃이 핀 뒤에는 좌우로 흔들리고 반짝이는 장면을 추가했다.</p>
+      <p>LCD의 한 문자 칸은 5×8 픽셀로 표현할 수 있기 때문에, 작은 픽셀 안에서도 변화가 구분되도록 장면을 나누어 구성했다.</p>
+    </section>
 
-  <section>
-    <h2>2. 회로 연결도</h2>
-    <img src="wiring.jpg" alt="회로 연결도">
-  </section>
+    <section>
+      <h2>01. 실제 작동 영상</h2>
+      <p>아두이노에 연결한 LCD에서 꽃 애니메이션이 재생되는 모습이다.</p>
+      <div id="video-area">
+        <video id="demo-video" controls playsinline preload="metadata" hidden>
+          <source src="demo.mp4" type="video/mp4">
+          이 브라우저는 동영상 재생을 지원하지 않습니다.
+        </video>
+        <div id="video-missing" class="missing">
+          <strong>실제 작동 영상</strong>
+          촬영한 영상을 <code>demo.mp4</code>라는 이름으로 업로드하면 이곳에 표시된다.
+        </div>
+      </div>
+    </section>
 
-  <section>
-    <h2>3. 구현 방법</h2>
-    <p>
-      아두이노의 Custom Character 기능을
-      활용하여 캐릭터의 동작을 표현하였다.
-    </p>
-  </section>
+    <section>
+      <h2>02. 구상 스케치 및 연결도</h2>
+      <p>꽃의 성장 단계와 LCD 출력 모습을 구상한 스케치 사진이다.</p>
+      <div class="photo">
+        <img src="sketch.jpg" alt="직접 그린 꽃 애니메이션 스케치 또는 연결도" hidden>
+        <div class="missing"><strong>스케치 사진</strong><code>sketch.jpg</code>를 업로드하면 이곳에 표시된다.</div>
+      </div>
+    </section>
 
-  <section>
-    <h2>4. 동작 사진</h2>
-    <img src="demo.jpg" alt="실제 동작 사진">
-  </section>
+    <section>
+      <h2>03. 아두이노 코드</h2>
+      <p>작성한 코드를 캡처한 이미지다. 코드에서는 8개의 문자 패턴을 저장하고, 정해진 순서와 시간에 따라 LCD에 출력하도록 작성했다.</p>
+      <div class="photo">
+        <img src="code1.jpg" alt="아두이노 코드 사진 첫 번째" hidden>
+        <div class="missing"><strong>코드 사진 1</strong><code>code1.jpg</code>를 업로드하면 이곳에 표시된다.</div>
+      </div>
+      <div class="photo">
+        <img src="code2.jpg" alt="아두이노 코드 사진 두 번째" hidden>
+        <div class="missing"><strong>코드 사진 2</strong><code>code2.jpg</code>를 업로드하면 이곳에 표시된다.</div>
+      </div>
+      <p class="note">코드 사진이 한 장이면 두 번째 코드 사진 영역은 삭제해도 된다.</p>
+    </section>
 
-  <section>
-    <h2>5. 고찰</h2>
-    <p>
-      LCD의 제한된 픽셀을 활용하여
-      움직임을 구현하는 과정을 학습하였다.
-    </p>
-  </section>
+    <section>
+      <h2>04. 동작 원리</h2>
+      <h3>1) 사용자 정의 문자 만들기</h3>
+      <p><code>frames[8][8]</code> 배열에는 씨앗, 새싹, 잎, 꽃봉오리, 핀 꽃, 좌우 흔들림, 반짝임의 모양이 저장되어 있다. 각 모양은 8줄의 이진수 데이터로 표현하며, <code>lcd.createChar()</code>를 이용해 LCD에 등록했다.</p>
+      <h3>2) 프레임 순서 정하기</h3>
+      <p><code>sequence[]</code> 배열에 18개의 재생 단계를 지정했다. 꽃이 핀 다음에는 왼쪽과 오른쪽으로 기울어진 모양을 번갈아 출력해 흔들리는 것처럼 보이게 했다.</p>
+      <h3>3) 프레임 전환 시간 조절하기</h3>
+      <p><code>durations[]</code> 배열에는 각 단계의 유지 시간을 120~350ms로 설정했다. <code>millis()</code>로 시간을 확인하고 다음 프레임을 출력하는 방식이므로, 각 장면에 다른 속도를 적용할 수 있다.</p>
+      <table>
+        <tr><th>LCD 규격</th><td>16열 × 2행 (I²C 주소 0x27)</td></tr>
+        <tr><th>출력 위치</th><td>첫째 줄, 첫째 칸 <code>(0, 0)</code></td></tr>
+        <tr><th>문자 패턴</th><td>8개, 각 5×8 픽셀</td></tr>
+        <tr><th>재생 단계</th><td>18단계</td></tr>
+        <tr><th>반복 주기</th><td>약 3.61초 (설정한 시간의 합)</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>05. 결과 및 고찰</h2>
+      <p>문자 한 칸만 사용할 수 있다는 제약 때문에 복잡한 그림을 그리기는 어렵다. 그래서 여러 모양을 조금씩 다르게 만들어 순서대로 보여주는 방식으로 움직임을 표현했다.</p>
+      <p>특히 성장하는 부분은 형태가 점차 바뀌도록 하고, 꽃이 핀 이후에는 좌우 흔들림을 반복하도록 구분했다. 또한 프레임마다 시간을 다르게 설정하면 단순히 같은 속도로 그림을 바꾸는 것보다 동작의 차이를 나타낼 수 있다.</p>
+      <p>이번 작업을 통해 LCD의 사용자 정의 문자가 단순한 기호 표시뿐 아니라 간단한 애니메이션에도 활용될 수 있음을 확인할 수 있었다.</p>
+    </section>
+    <footer>LCD1602 Custom Character 프로젝트</footer>
+  </div>
+
+  <script>
+    // 이미지가 실제로 업로드된 경우에만 사진을 표시합니다.
+    document.querySelectorAll('.photo').forEach(function (area) {
+      var img = area.querySelector('img');
+      var placeholder = area.querySelector('.missing');
+      function showImage() { img.hidden = false; placeholder.hidden = true; }
+      img.addEventListener('load', showImage);
+      img.addEventListener('error', function () { img.hidden = true; placeholder.hidden = false; });
+      if (img.complete && img.naturalWidth > 0) showImage();
+    });
+
+    // 업로드한 MP4 파일이 읽히면 영상을 표시합니다.
+    var video = document.getElementById('demo-video');
+    var videoPlaceholder = document.getElementById('video-missing');
+    video.addEventListener('loadedmetadata', function () {
+      video.hidden = false;
+      videoPlaceholder.hidden = true;
+    });
+  </script>
 </body>
 </html>
